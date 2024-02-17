@@ -1,18 +1,22 @@
+// index.js
 const express = require('express');
+const bodyParser = require('body-parser');
+const { connectDB } = require('./db');
+const routes = require('./routes');
+
 const app = express();
-const port = 3000;
+const PORT = process.env.PORT || 3000;
 
-// Middleware pour le parsing des données JSON
-app.use(express.json());
+// Middleware
+app.use(bodyParser.json());
 
-// Routes
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
+// Connexion à la base de données
+connectDB();
 
-// Autres routes ici...
+// Utilisation des routes avec le préfixe /api
+app.use('/api', routes);
 
-// Lancement du serveur
-app.listen(port, () => {
-  console.log(`Server listening at http://localhost:${port}`);
+// Démarrer le serveur
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
