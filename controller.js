@@ -11,6 +11,11 @@ async function registerUser(req, res) {
             return res.status(400).json({ message: 'Ce pseudo est déjà utilisé' });
         }
 
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({ message: 'Cet email est déjà utilisé' });
+        }
+
         // Hasher le mot de passe
         const hashedPassword = await bcrypt.hash(password, 10);
 
