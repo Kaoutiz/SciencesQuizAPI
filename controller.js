@@ -4,18 +4,18 @@ const { User } = require('./db');
 
 async function registerUser(req, res) {
     try {
-        const { email, password } = req.body;
+        const { pseudo, password } = req.body;
 
-        const existingUser = await User.findOne({ email });
+        const existingUser = await User.findOne({ pseudo });
         if (existingUser) {
-            return res.status(400).json({ message: 'Cet email est déjà utilisé' });
+            return res.status(400).json({ message: 'Ce pseudo est déjà utilisé' });
         }
 
         // Hasher le mot de passe
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // Créer un nouvel utilisateur avec le mot de passe hashé
-        const newUser = new User({ email, password: hashedPassword });
+        const newUser = new User({ pseudo, password: hashedPassword });
         await newUser.save();
         
         res.status(201).json({ message: 'Utilisateur créé avec succès', user: newUser });
@@ -26,10 +26,10 @@ async function registerUser(req, res) {
 
 async function loginUser(req, res) {
     try {
-        const { email, password } = req.body;
+        const { pseudo, password } = req.body;
 
-        // Recherche de l'utilisateur par email
-        const user = await User.findOne({ email });
+        // Recherche de l'utilisateur par pseudo
+        const user = await User.findOne({ pseudo });
 
         // Vérification si l'utilisateur existe
         if (!user) {
