@@ -1,11 +1,31 @@
 const { Question } = require('../models/Question');
 
-// Fonction pour gérer une requête pour récupérer les questions
+let derniereQuestionIndex = -1; // Variable pour stocker l'index de la dernière question sélectionnée
+
 async function recupererQuestions(req, res) {
     try {
-        // Récupérer toutes les questions de la collection
-        const questions = await Question.find();
-        res.json(questions); // Envoyer les questions en tant que réponse JSON
+        // Récupérer le nombre total de documents dans la collection
+        const count = await Question.countDocuments();
+
+        let randomIndex;
+        // Si toutes les questions ont déjà été sélectionnées, réinitialiser
+        if (count === 1 || count === 0 || derniereQuestionIndex === count - 1) {
+            derniereQuestionIndex = -1;
+            randomIndex = Math.floor(Math.random() * count);
+        } else {
+            // Générer un index aléatoire différent de celui de la dernière question sélectionnée
+            do {
+                randomIndex = Math.floor(Math.random() * count);
+            } while (randomIndex === derniereQuestionIndex);
+        }
+
+        // Récupérer la question correspondant à l'index généré
+        const randomQuestion = await Question.findOne().skip(randomIndex);
+
+        // Mettre à jour l'index de la dernière question sélectionnée
+        derniereQuestionIndex = randomIndex;
+
+        res.json(randomQuestion); // Envoyer la question choisie au hasard en tant que réponse JSON
     } catch (erreur) {
         console.error('Erreur lors de la récupération des questions :', erreur);
         res.status(500).send('Erreur lors de la récupération des questions');
