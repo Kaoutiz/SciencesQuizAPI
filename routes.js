@@ -1,5 +1,5 @@
 const express = require('express');
-const { registerUser, loginUser, demanderAmi, changerEtatDemande } = require('./controller/UsersController');
+const { registerUser, loginUser, demanderAmi, changerEtatDemande, updateUserExperience } = require('./controller/UsersController');
 const { recupererQuestions, incrementerChoixReponse } = require('./controller/QuestionsController');
 
 const router = express.Router();
@@ -21,5 +21,8 @@ router.post('/Friend', demanderAmi);
 
 // Route POST pour envoyer une demande d'ami
 router.patch('/Friend', changerEtatDemande);
+
+// Route PATCH pour mettre à jour l'expérience de l'utilisateur
+router.patch('/:userId/experience', updateUserExperience);
 
 module.exports = router;
