@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const { User } = require('../models/User');
+const { FriendAsk } = require('../models/FriendAsk');
 const { Friend } = require('../models/Friend');
 
 async function registerUser(req, res) {
@@ -54,19 +55,19 @@ async function demanderAmi(req, res) {
         const { userId, friendId } = req.body;
 
         // Vérifier si une demande existe déjà de l'utilisateur A vers l'utilisateur B
-        const existingRequestToFriend = await Friend.findOne({ userId, friendId });
+        const existingRequestToFriend = await FriendAsk.findOne({ userId, friendId });
         if (existingRequestToFriend) {
             return res.status(400).json({ message: 'Vous avez déjà une demande d\'ami en attente pour cet utilisateur' });
         }
 
         // Vérifier si une demande existe déjà de l'utilisateur B vers l'utilisateur A
-        const existingRequestFromFriend = await Friend.findOne({ userId: friendId, friendId: userId });
+        const existingRequestFromFriend = await FriendAsk.findOne({ userId: friendId, friendId: userId });
         if (existingRequestFromFriend) {
             return res.status(400).json({ message: 'Vous avez déjà envoyé une demande d\'ami à cet utilisateur' });
         }
 
         // Créer une nouvelle demande d'ami
-        const friendRequest = new Friend({ userId: friendId, friendId: userId });
+        const friendRequest = new FriendAsk({ userId: friendId, friendId: userId });
         await friendRequest.save();
 
         res.status(201).json({ message: 'Demande d\'ami envoyée avec succès', friendRequest });
@@ -81,7 +82,7 @@ async function changerEtatDemande(req, res) {
         const { userId, friendId, nouvelEtat } = req.body;
 
         // Vérifier si la demande existe
-        const demandeExistante = await Friend.findOne({ userId, friendId });
+        const demandeExistante = await FriendAsk.findOne({ userId, friendId });
         if (!demandeExistante) {
             return res.status(404).json({ message: 'Demande d\'ami non trouvée' });
         }
@@ -89,6 +90,12 @@ async function changerEtatDemande(req, res) {
         // Modifier l'état de la demande
         demandeExistante.status = nouvelEtat;
         await demandeExistante.save();
+
+        // Si la demande est acceptée, créer une entrée dans la collection des amis
+        if (nouvelEtat === 'accepted') {
+            const nouvelAmi = new Friend({ userId, friendId });
+            await nouvelAmi.save();
+        }
 
         res.status(200).json({ message: 'État de la demande d\'ami modifié avec succès', demande: demandeExistante });
     } catch (error) {
