@@ -103,9 +103,32 @@ async function changerEtatDemande(req, res) {
     }
 }
 
+async function updateUserExperience(req, res) {
+    try {
+        const { userId } = req.params;
+        const { experience } = req.body;
+
+        // Rechercher l'utilisateur par ID
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ message: 'Utilisateur non trouvé' });
+        }
+
+        // Mettre à jour l'expérience de l'utilisateur
+        user.experience = experience;
+        await user.save();
+
+        res.status(200).json({ message: 'Expérience de l\'utilisateur mise à jour avec succès', user });
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur lors de la mise à jour de l\'expérience de l\'utilisateur', error: error.message });
+    }
+}
+
 module.exports = {
     registerUser,
     loginUser,
     demanderAmi,
-    changerEtatDemande
+    changerEtatDemande,
+    updateUserExperience
 };
