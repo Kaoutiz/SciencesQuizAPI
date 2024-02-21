@@ -1,5 +1,5 @@
 const express = require('express');
-const { registerUser, loginUser, recupererQuestions } = require('./controller');
+const { registerUser, loginUser, recupererQuestions, incrementerChoixReponse } = require('./controller');
 
 const router = express.Router();
 
@@ -11,5 +11,8 @@ router.post('/Login', loginUser);
 
 // Route GET pour la récupération des questions
 router.get('/Questions', recupererQuestions);
+
+// Route GET pour la récupération des questions
+router.patch('/Questions/:id/:reponse', incrementerChoixReponse);
 
 module.exports = router;
