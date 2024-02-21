@@ -54,6 +54,18 @@ async function demanderAmi(req, res) {
     try {
         const { userId, friendId } = req.body;
 
+        // Vérifier si les utilisateurs sont déjà amis dans la collection "friends"
+        const existingFriendship = await Friend.findOne({
+            $or: [
+                { userId, friendId },
+                { userId: friendId, friendId: userId }
+            ]
+        });
+
+        if (existingFriendship) {
+            return res.status(400).json({ message: 'Vous êtes déjà amis avec cet utilisateur' });
+        }
+
         // Vérifier si une demande existe déjà de l'utilisateur A vers l'utilisateur B
         const existingRequestToFriend = await FriendAsk.findOne({ userId, friendId });
         if (existingRequestToFriend) {
@@ -76,6 +88,7 @@ async function demanderAmi(req, res) {
         res.status(500).json({ message: 'Erreur lors de la demande d\'ami', error: error.message });
     }
 }
+
 
 async function changerEtatDemande(req, res) {
     try {
