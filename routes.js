@@ -1,5 +1,8 @@
 const express = require('express');
-const { registerUser, loginUser, recupererQuestions, incrementerChoixReponse } = require('./controller');
+const { registerUser } = require('./controller/registerUserController');
+const { loginUser } = require('./controller/loginUserController');
+const { recupererQuestions } = require('./controller/recupererQuestionsController');
+const { incrementerChoixReponse } = require('./controller/incrementerChoixReponseController');
 
 const router = express.Router();
 
