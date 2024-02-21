@@ -1,8 +1,6 @@
 const express = require('express');
-const { registerUser } = require('./controller/registerUserController');
-const { loginUser } = require('./controller/loginUserController');
-const { recupererQuestions } = require('./controller/recupererQuestionsController');
-const { incrementerChoixReponse } = require('./controller/incrementerChoixReponseController');
+const { registerUser, loginUser, demanderAmi, changerEtatDemande } = require('./controller/UsersController');
+const { recupererQuestions, incrementerChoixReponse } = require('./controller/QuestionsController');
 
 const router = express.Router();
 
@@ -17,5 +15,11 @@ router.get('/Questions', recupererQuestions);
 
 // Route GET pour la récupération des questions
 router.patch('/Questions/:id/:reponse', incrementerChoixReponse);
+
+// Route POST pour envoyer une demande d'ami
+router.post('/Friend', demanderAmi);
+
+// Route POST pour envoyer une demande d'ami
+router.patch('/Friend', changerEtatDemande);
 
 module.exports = router;
