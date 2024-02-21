@@ -138,10 +138,29 @@ async function updateUserExperience(req, res) {
     }
 }
 
+async function rechercherUtilisateurParPseudo(req, res) {
+    try {
+        const { pseudo } = req.params;
+
+        // Recherche des utilisateurs par pseudo (cas insensible à la casse)
+        const utilisateurs = await User.find({ pseudo: { $regex: new RegExp(pseudo, "i") } });
+
+        if (utilisateurs.length === 0) {
+            return res.status(404).json({ message: 'Aucun utilisateur trouvé avec ce pseudo' });
+        }
+
+        res.status(200).json({ utilisateurs });
+    } catch (error) {
+        console.error('Erreur lors de la recherche d\'utilisateur par pseudo :', error);
+        res.status(500).json({ message: 'Erreur lors de la recherche d\'utilisateur par pseudo', error: error.message });
+    }
+}
+
 module.exports = {
     registerUser,
     loginUser,
     demanderAmi,
     changerEtatDemande,
-    updateUserExperience
+    updateUserExperience,
+    rechercherUtilisateurParPseudo
 };
