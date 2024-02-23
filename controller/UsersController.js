@@ -63,19 +63,19 @@ async function demanderAmi(req, res) {
         });
 
         if (existingFriendship) {
-            return res.status(400).json({ message: 'Vous êtes déjà amis avec cet utilisateur' });
+            return res.status(401).json({ message: 'Vous êtes déjà amis avec cet utilisateur' });
         }
 
         // Vérifier si une demande existe déjà de l'utilisateur A vers l'utilisateur B
         const existingRequestToFriend = await FriendAsk.findOne({ userId, friendId });
         if (existingRequestToFriend) {
-            return res.status(400).json({ message: 'Vous avez déjà une demande d\'ami en attente pour cet utilisateur' });
+            return res.status(402).json({ message: 'Vous avez déjà une demande d\'ami en attente pour cet utilisateur' });
         }
 
         // Vérifier si une demande existe déjà de l'utilisateur B vers l'utilisateur A
         const existingRequestFromFriend = await FriendAsk.findOne({ userId: friendId, friendId: userId });
         if (existingRequestFromFriend) {
-            return res.status(400).json({ message: 'Vous avez déjà envoyé une demande d\'ami à cet utilisateur' });
+            return res.status(403).json({ message: 'Vous avez déjà envoyé une demande d\'ami à cet utilisateur' });
         }
 
         // Créer une nouvelle demande d'ami
