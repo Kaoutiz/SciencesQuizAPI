@@ -1,6 +1,7 @@
 const express = require('express');
 const { registerUser, loginUser, demanderAmi, changerEtatDemande, updateUserExperience, rechercherUtilisateurParPseudo } = require('./controller/UsersController');
 const { recupererQuestions, incrementerChoixReponse } = require('./controller/QuestionsController');
+const { displayCategories } = require('./controller/CategorieController');
 
 const router = express.Router();
 
@@ -15,6 +16,9 @@ router.get('/Questions', recupererQuestions);
 
 // Route GET pour la récupération des questions
 router.patch('/Questions/:id/:reponse', incrementerChoixReponse);
+
+// Route GET pour afficher les catégories
+router.get('/Categories', displayCategories);
 
 // Route POST pour envoyer une demande d'ami
 router.post('/Friend', demanderAmi);
