@@ -82,7 +82,7 @@ async function demanderAmi(req, res) {
         const friendRequest = new FriendAsk({ userId: friendId, friendId: userId });
         await friendRequest.save();
 
-        res.status(201).json({ message: 'Demande d\'ami envoyée avec succès', friendRequest });
+        res.status(200).json({ message: 'Demande d\'ami envoyée avec succès', friendRequest });
     } catch (error) {
         console.error('Erreur lors de la demande d\'ami :', error);
         res.status(500).json({ message: 'Erreur lors de la demande d\'ami', error: error.message });
