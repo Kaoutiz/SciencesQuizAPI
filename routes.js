@@ -1,5 +1,5 @@
 const express = require('express');
-const { registerUser, loginUser, demanderAmi, changerEtatDemande, updateUserExperience, rechercherUtilisateurParPseudo } = require('./controller/UsersController');
+const { registerUser, loginUser, demanderAmi, changerEtatDemande, updateUserExperience, rechercherUtilisateurParPseudo, displayDemandeAmis, rechercherUtilisateurParID } = require('./controller/UsersController');
 const { recupererQuestions, incrementerChoixReponse } = require('./controller/QuestionsController');
 const { displayCategories } = require('./controller/CategorieController');
 
@@ -26,8 +26,14 @@ router.post('/Friend', demanderAmi);
 // Route POST pour envoyer une demande d'ami
 router.patch('/Friend', changerEtatDemande);
 
+// Route GET pour récupérer la liste des demande d'ami
+router.get('/Friend/:id', displayDemandeAmis);
+
 // Route PATCH pour mettre à jour l'expérience de l'utilisateur
 router.patch('/:userId/experience', updateUserExperience);
+
+// Route GET pour afficher les infos d'un utilisateur via son id
+router.get('/:id', rechercherUtilisateurParID);
 
 // Route GET pour afficher les infos d'un utilisateur via son pseudo
 router.get('/:pseudo', rechercherUtilisateurParPseudo);
