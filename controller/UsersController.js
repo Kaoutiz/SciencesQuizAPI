@@ -57,8 +57,8 @@ async function demanderAmi(req, res) {
         // Vérifier si les utilisateurs sont déjà amis dans la collection "friends"
         const existingFriendship = await Friend.findOne({
             $or: [
-                { userId, friendId },
-                { userId: friendId, friendId: userId }
+                { userId, userId },
+                { userId: userId, friendId: friendId }
             ]
         });
 
@@ -156,11 +156,44 @@ async function rechercherUtilisateurParPseudo(req, res) {
     }
 }
 
+async function rechercherUtilisateurParID(req, res) {
+    try {
+        const { id } = req.params; // Récupérer l'ID de l'utilisateur depuis les paramètres de la requête
+
+        // Rechercher l'utilisateur par son ID
+        const utilisateur = await User.findById(id);
+
+        if (!utilisateur) { // Vérifier si aucun utilisateur n'a été trouvé
+            return res.status(404).json({ message: 'Aucun utilisateur trouvé avec cet ID' });
+        }
+
+        res.status(200).json({ utilisateur }); // Renvoyer l'utilisateur trouvé
+    } catch (error) {
+        console.error('Erreur lors de la recherche d\'utilisateur par ID :', error);
+        res.status(500).json({ message: 'Erreur lors de la recherche d\'utilisateur par ID', error: error.message });
+    }
+}
+
+async function displayDemandeAmis(req, res) {
+
+    const userId = req.params.id;
+    console.log(req.params.id)
+    try {
+        const demandesAmis = await FriendAsk.find({ userId: userId, status: "pending" });
+        res.json(demandesAmis);
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Erreur lors de la récupération des demandes d'amis." });
+    }
+}
+
 module.exports = {
     registerUser,
     loginUser,
     demanderAmi,
     changerEtatDemande,
     updateUserExperience,
-    rechercherUtilisateurParPseudo
+    rechercherUtilisateurParPseudo,
+    displayDemandeAmis,
+    rechercherUtilisateurParID
 };
