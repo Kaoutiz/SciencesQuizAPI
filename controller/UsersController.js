@@ -191,6 +191,54 @@ async function displayDemandeAmis(req, res) {
     }
 }
 
+async function getAllFriendsByUserId(req, res) {
+    try {
+        const { id } = req.params; // Récupérer l'ID de l'utilisateur depuis les paramètres de la requête
+
+        // Rechercher tous les amis de l'utilisateur par son ID dans la collection friends
+        const friends = await Friend.find({ userId: id });
+
+        if (!friends) { // Vérifier si aucun ami n'a été trouvé
+            return res.status(404).json({ message: 'Aucun ami trouvé pour cet utilisateur' });
+        }
+
+        res.status(200).json({ friends }); // Renvoyer la liste des amis trouvés
+    } catch (error) {
+        console.error('Erreur lors de la recherche des amis par ID utilisateur :', error);
+        res.status(500).json({ message: 'Erreur lors de la recherche des amis par ID utilisateur', error: error.message });
+    }
+}
+
+async function deleteFriendById(req, res) {
+    try {
+        const { userId, friendId } = req.params; // Récupérer l'ID de l'utilisateur et l'ID de l'ami depuis les paramètres de la requête
+
+        // Supprimer l'ami de la collection friends en utilisant l'ID de l'utilisateur et l'ID de l'ami
+        const deletedFriend = await Friend.findOneAndDelete({ userId: userId, friendId: friendId });
+
+        if (!deletedFriend) { // Vérifier si aucun ami n'a été trouvé avec ces IDs
+            return res.status(404).json({ message: 'Aucun ami trouvé avec ces IDs' });
+        }
+
+        res.status(200).json({ message: 'Ami supprimé avec succès', deletedFriend }); // Renvoyer un message de succès avec les données de l'ami supprimé
+    } catch (error) {
+        console.error('Erreur lors de la suppression de l\'ami par ID :', error);
+        res.status(500).json({ message: 'Erreur lors de la suppression de l\'ami par ID', error: error.message });
+    }
+}
+
+async function displayTopPlayers(req, res) {
+    try {
+        // Recherche des 10 joueurs avec le score le plus élevé
+        const topPlayers = await User.find().sort({ experience: -1 }).limit(10);
+
+        res.json(topPlayers); // Renvoie les résultats au format JSON
+    } catch (err) {
+        console.error('Erreur lors de la récupération des 10 joueurs avec le score le plus élevé :', err);
+        res.status(500).json({ message: 'Erreur lors de la récupération des 10 joueurs avec le score le plus élevé' });
+    }
+}
+
 module.exports = {
     registerUser,
     loginUser,
@@ -199,5 +247,8 @@ module.exports = {
     updateUserExperience,
     rechercherUtilisateurParPseudo,
     displayDemandeAmis,
-    rechercherUtilisateurParID
+    rechercherUtilisateurParID,
+    getAllFriendsByUserId,
+    deleteFriendById,
+    displayTopPlayers
 };
