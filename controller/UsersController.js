@@ -78,6 +78,10 @@ async function demanderAmi(req, res) {
             return res.status(403).json({ message: 'Vous avez déjà envoyé une demande d\'ami à cet utilisateur' });
         }
 
+        if(userId == friendId){
+            return res.status(405).json({ message: 'Vous ne pouvez pas vous auto-demander en amis' });
+        }
+
         // Créer une nouvelle demande d'ami
         const friendRequest = new FriendAsk({ userId: friendId, friendId: userId });
         await friendRequest.save();
