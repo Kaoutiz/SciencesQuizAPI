@@ -229,13 +229,13 @@ async function deleteFriendById(req, res) {
 
 async function displayTopPlayers(req, res) {
     try {
-        // Recherche des 10 joueurs avec le score le plus élevé
-        const topPlayers = await User.find().sort({ experience: -1 }).limit(10);
+        // Recherche des 7 joueurs avec le score le plus élevé
+        const topPlayers = await User.find().sort({ experience: -1 }).limit(7);
 
         res.json(topPlayers); // Renvoie les résultats au format JSON
     } catch (err) {
-        console.error('Erreur lors de la récupération des 10 joueurs avec le score le plus élevé :', err);
-        res.status(500).json({ message: 'Erreur lors de la récupération des 10 joueurs avec le score le plus élevé' });
+        console.error('Erreur lors de la récupération des 7 joueurs avec le score le plus élevé :', err);
+        res.status(500).json({ message: 'Erreur lors de la récupération des 7 joueurs avec le score le plus élevé' });
     }
 }
 
