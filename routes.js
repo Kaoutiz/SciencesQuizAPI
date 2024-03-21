@@ -42,7 +42,7 @@ router.patch('/:userId/experience', updateUserExperience);
 router.get('/:id', rechercherUtilisateurParID);
 
 // Route GET pour afficher les infos d'un utilisateur via son pseudo
-router.get('/:pseudo', rechercherUtilisateurParPseudo);
+router.get('/Search/:pseudo', rechercherUtilisateurParPseudo);
 
 // Route GET pour afficher les amis d'un utilisateur via son id
 router.get('/Friend/list/:id', getAllFriendsByUserId);

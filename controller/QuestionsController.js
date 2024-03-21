@@ -4,28 +4,26 @@ let derniereQuestionIndex = -1; // Variable pour stocker l'index de la dernière
 
 async function recupererQuestions(req, res) {
     try {
-        // Récupérer le nombre total de documents dans la collection
-        const count = await Question.countDocuments();
+        // Récupérer la catégorie de la question à partir des paramètres de la requête
+        const categorie = req.query.categorie;
 
-        let randomIndex;
-        // Si toutes les questions ont déjà été sélectionnées, réinitialiser
-        if (count === 1 || count === 0 || derniereQuestionIndex === count - 1) {
-            derniereQuestionIndex = -1;
-            randomIndex = Math.floor(Math.random() * count);
+        // Récupérer la limite de réponses à partir des paramètres de la requête (par défaut 10 si non spécifié)
+        const limit = parseInt(req.query.limit) || 10;
+
+        let questions;
+
+        if (categorie) {
+            // Récupérer les questions de la catégorie spécifiée
+            questions = await Question.aggregate([
+                { $match: { categorie: categorie } },
+                { $sample: { size: limit } }
+            ]).exec();
         } else {
-            // Générer un index aléatoire différent de celui de la dernière question sélectionnée
-            do {
-                randomIndex = Math.floor(Math.random() * count);
-            } while (randomIndex === derniereQuestionIndex);
+            // Récupérer 10 questions aléatoires de toutes les catégories
+            questions = await Question.aggregate([{ $sample: { size: limit } }]).exec();
         }
 
-        // Récupérer la question correspondant à l'index généré
-        const randomQuestion = await Question.findOne().skip(randomIndex);
-
-        // Mettre à jour l'index de la dernière question sélectionnée
-        derniereQuestionIndex = randomIndex;
-
-        res.json(randomQuestion); // Envoyer la question choisie au hasard en tant que réponse JSON
+        res.json(questions); // Envoyer les questions récupérées en tant que réponse JSON
     } catch (erreur) {
         console.error('Erreur lors de la récupération des questions :', erreur);
         res.status(500).send('Erreur lors de la récupération des questions');
