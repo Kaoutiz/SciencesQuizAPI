@@ -1,7 +1,5 @@
 const { Question } = require('../models/Question');
 
-let derniereQuestionIndex = -1; // Variable pour stocker l'index de la dernière question sélectionnée
-
 async function recupererQuestions(req, res) {
     try {
         // Récupérer la catégorie de la question à partir des paramètres de la requête
